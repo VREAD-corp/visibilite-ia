@@ -1,0 +1,73 @@
+<!--
+title: Méthodologie : mesurer honnêtement sa visibilité dans les assistants IA
+description: Notre protocole pour mesurer la présence d'une entreprise dans les réponses des assistants IA : répétitions, indicateurs, limites connues.
+updated: 2026-10-11
+type: TechArticle
+-->
+<p class="eyebrow">Méthodologie</p>
+<h1>Mesurer sa visibilité dans les assistants IA, honnêtement</h1>
+<p class="lead">Les réponses des assistants IA ne sont ni stables ni personnalisables à volonté. Voici comment nous en tirons
+une mesure utile, et ce qu'il ne faut pas leur faire dire.</p>
+
+<h2 id="variabilite">1. Pourquoi une seule question ne suffit pas</h2>
+<ul>
+<li><strong>Les réponses varient d'un essai à l'autre.</strong> Les modèles de langage tirent leurs réponses avec une part
+d'aléatoire. Même avec les réglages prévus pour cela, OpenAI indique que le déterminisme
+<q lang="en">is not guaranteed</q> (<a href="https://platform.openai.com/docs/api-reference/chat/create">référence de l'API OpenAI, paramètre <code>seed</code></a>).</li>
+<li><strong>La recherche web change tout.</strong> Avec la recherche activée, l'assistant reformule votre question en une ou
+plusieurs recherches et cite des pages ; OpenAI précise que les résultats et citations peuvent être incomplets, datés ou
+erronés (<a href="https://help.openai.com/en/articles/9237897-chatgpt-search">aide ChatGPT</a>).</li>
+<li><strong>Le contexte compte</strong> : compte connecté, mémoire, pays, langue, version du modèle.</li>
+</ul>
+<p>Conséquence : nous répétons chaque requête plusieurs fois et nous raisonnons en <strong>taux</strong> (« cité dans 4 essais
+sur 6 »), jamais sur une capture d'écran isolée.</p>
+
+<h2 id="protocole">2. Le protocole</h2>
+<ol>
+<li><strong>Jeu de requêtes</strong> construit avec vous : requêtes de marque (votre nom), requêtes de catégorie (« meilleur
+[activité] à [ville] »), requêtes de besoin (le problème du client avec ses mots), requêtes comparatives.</li>
+<li><strong>Plusieurs essais par requête et par assistant</strong>, dans des sessions indépendantes, à la même période.</li>
+<li><strong>Relevé structuré</strong> de chaque réponse : entreprise citée ou non, position, exactitude des faits (activité,
+adresse, prix, horaires), sources citées, concurrents cités.</li>
+<li><strong>Vérification humaine</strong> des faits relevés par rapport à vos informations officielles.</li>
+<li><strong>Diagnostic</strong> : rapprochement avec la <a href="{{base}}checklist.html">check-list GEO</a> (robots.txt,
+cohérence des informations, sources tierces).</li>
+</ol>
+
+<h2 id="indicateurs">3. Les indicateurs</h2>
+<div class="table-wrap">
+<table>
+<caption>Indicateurs du rapport</caption>
+<thead><tr><th scope="col">Indicateur</th><th scope="col">Définition</th></tr></thead>
+<tbody>
+<tr><td>Taux de mention</td><td>Part des réponses qui citent votre entreprise, par type de requête</td></tr>
+<tr><td>Taux d'exactitude</td><td>Part des mentions sans erreur factuelle importante</td></tr>
+<tr><td>Part de citation de votre site</td><td>Part des réponses avec sources qui citent votre site officiel</td></tr>
+<tr><td>Présence des concurrents</td><td>Entreprises citées à votre place, et sources utilisées pour elles</td></tr>
+<tr><td>Erreurs récurrentes</td><td>Informations fausses qui reviennent (prix, adresse, offre), avec leur source probable</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="limites">4. Les limites, dites clairement</h2>
+<ul>
+<li><strong>API et applications grand public peuvent différer.</strong> Le rapport payant interrogera les assistants via
+leurs API officielles : c'est la seule méthode reproductible et conforme à leurs conditions d'utilisation. Vos clients, eux,
+utilisent les applications grand public, dont les réponses peuvent être différentes. Nous le signalons dans chaque
+rapport et le vérifions par quelques contrôles manuels.</li>
+<li><strong>Une photographie datée</strong>, pas une garantie : les modèles et leurs sources évoluent sans préavis.</li>
+<li><strong>Pas de lien de cause à effet démontré</strong> entre une action précise et une citation par une IA : nous
+proposons des actions de bon sens, fondées sur la documentation officielle des éditeurs.</li>
+</ul>
+
+<h2 id="refus">5. Ce que nous refusons de faire</h2>
+<ul>
+<li>Collecter automatiquement les interfaces grand public (ChatGPT, aperçus IA de Google…) : ce n'est pas conforme à leurs
+conditions d'utilisation.</li>
+<li>Promettre une place dans les réponses d'une IA.</li>
+<li>Produire de faux avis ou des contenus trompeurs destinés aux IA.</li>
+</ul>
+
+<h2 id="vous-meme">6. Le faire vous-même</h2>
+<p>Le <a href="{{base}}kit-auto-test.html">kit gratuit en 10 prompts</a> applique une version simplifiée de ce protocole,
+manuellement, dans les applications que vous utilisez déjà. C'est le meilleur point de départ.</p>

@@ -1,0 +1,165 @@
+<!--
+title: Check-list GEO : être bien décrit par ChatGPT, Perplexity, Gemini et Copilot
+description: Les points à vérifier pour qu'une PME soit trouvée et bien décrite par les assistants IA : robots, contenu, données structurées, avis, mesure.
+updated: 2026-10-11
+type: HowTo
+-->
+<p class="eyebrow">Check-list gratuite · mise à jour le 11 octobre 2026</p>
+<h1>Check-list GEO pour PME</h1>
+<p class="lead">Le « GEO » (<i lang="en">generative engine optimization</i>) consiste à rendre votre entreprise facile à
+trouver et à décrire correctement pour les assistants IA qui répondent en s'appuyant sur le web. Bonne nouvelle : l'essentiel
+repose sur des bases solides et vérifiables, pas sur des astuces.</p>
+
+<div class="cta">
+<a class="btn" href="{{release}}checklist-geo-pme.pdf">Télécharger la check-list (PDF imprimable)</a>
+<a class="btn secondary" href="{{base}}kit-auto-test.html">Faire l'auto-test en 10 prompts</a>
+</div>
+
+<div class="note"><p><strong>À retenir d'abord.</strong> Google indique qu'il n'existe <q>aucune exigence supplémentaire</q> pour
+apparaître dans ses aperçus IA (AI Overviews) et son mode IA : la page doit être indexée et pouvoir s'afficher avec un extrait
+dans la recherche Google (<a href="https://developers.google.com/search/docs/appearance/ai-features">Google Search Central</a>).
+Méfiez-vous de toute offre qui « garantit » une place dans les réponses d'une IA.</p></div>
+
+<h2 id="socle">1. Le socle : être trouvable et cohérent</h2>
+<ul>
+<li><strong>Votre site est indexé</strong> : tapez <code>site:votre-domaine.fr</code> dans Google et Bing. Vos pages
+principales doivent apparaître.</li>
+<li><strong>Une page dit clairement qui vous êtes</strong> : activité, zone servie, adresse, téléphone, horaires, en texte
+(pas seulement dans une image).</li>
+<li><strong>Une page par offre principale</strong>, avec ce qui est inclus, pour qui, et un ordre de prix si possible.
+Sans prix publié, une IA peut en inventer un ou citer celui d'un annuaire.</li>
+<li><strong>Le même nom, la même adresse, le même téléphone partout</strong> : site, fiche d'établissement Google, réseaux
+sociaux, annuaires professionnels. Les incohérences se retrouvent dans les réponses.</li>
+<li><strong>Votre fiche d'établissement Google est exacte</strong> : nom réel sans mots-clés ajoutés, adresse ou zone
+desservie précise, comme l'exigent les
+<a href="https://support.google.com/business/answer/3038177">règles de Google Business Profile</a>.</li>
+<li><strong>Une page « à propos »</strong> avec la date de création, les dirigeants ou l'équipe, les qualifications
+réelles et les mentions légales.</li>
+</ul>
+
+<h2 id="acces">2. L'accès : ne pas bloquer les robots de recherche des IA</h2>
+<p>Chaque éditeur distingue les robots qui <strong>indexent pour la recherche</strong> (ceux qui vous rendent visible dans
+les réponses) de ceux qui <strong>collectent pour l'entraînement</strong> des modèles. Vous pouvez autoriser les premiers et
+refuser les seconds.</p>
+<div class="table-wrap">
+<table>
+<caption>Robots à connaître (fichier robots.txt)</caption>
+<thead><tr><th scope="col">Robot</th><th scope="col">Rôle</th><th scope="col">Si vous le bloquez</th></tr></thead>
+<tbody>
+<tr><td><code>OAI-SearchBot</code> (OpenAI)</td><td>Recherche dans ChatGPT</td><td>Vos pages ne sont pas montrées dans les réponses de recherche de ChatGPT (<a href="https://developers.openai.com/api/docs/bots">doc OpenAI</a>)</td></tr>
+<tr><td><code>GPTBot</code> (OpenAI)</td><td>Entraînement des modèles</td><td>Vos contenus ne servent pas à l'entraînement ; pas d'effet sur la recherche ChatGPT</td></tr>
+<tr><td><code>PerplexityBot</code></td><td>Recherche dans Perplexity</td><td>Vous risquez de ne plus être cité par Perplexity (<a href="https://docs.perplexity.ai/guides/bots">doc Perplexity</a>)</td></tr>
+<tr><td><code>Claude-SearchBot</code> (Anthropic)</td><td>Recherche dans Claude</td><td>Visibilité réduite dans les résultats de recherche de Claude (<a href="https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler">doc Anthropic</a>)</td></tr>
+<tr><td><code>ClaudeBot</code> (Anthropic)</td><td>Entraînement des modèles</td><td>Vos futurs contenus sont exclus de l'entraînement</td></tr>
+<tr><td><code>Googlebot</code></td><td>Recherche Google, y compris aperçus IA et mode IA</td><td>Vous disparaissez de Google, aperçus IA compris</td></tr>
+<tr><td><code>Google-Extended</code></td><td>Entraînement de Gemini et réponses des applis Gemini / Vertex AI</td><td>Aucun effet sur la recherche Google ni sur les aperçus IA (<a href="https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers">doc Google</a>)</td></tr>
+<tr><td><code>Bingbot</code></td><td>Recherche Bing, utilisée par Copilot</td><td>Vous disparaissez de Bing et des réponses qui s'appuient sur lui</td></tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li><strong>Vérifiez votre robots.txt</strong> (<code>votre-domaine.fr/robots.txt</code>) : aucune ligne
+<code>Disallow: /</code> visant un robot de recherche que vous voulez garder.</li>
+<li><strong>Vérifiez votre pare-feu ou CDN</strong> : certains services bloquent par défaut les « robots IA ». Regardez le
+réglage plutôt que de supposer.</li>
+<li><strong>Les robots déclenchés par un utilisateur</strong> (<code>ChatGPT-User</code>, <code>Perplexity-User</code>,
+<code>Claude-User</code>) lisent une page quand quelqu'un le demande ; OpenAI et Perplexity précisent que le robots.txt
+peut ne pas s'appliquer à ces accès.</li>
+<li><strong>Après une modification</strong>, OpenAI indique un délai d'environ 24 heures pour la prise en compte.</li>
+<li><strong>Attention aux balises de restriction</strong> : <code>nosnippet</code>, <code>max-snippet</code> ou
+<code>noindex</code> limitent aussi votre présence dans les fonctionnalités IA de Google ; chez Bing, <code>NOARCHIVE</code>
+exclut une page des réponses du chat (<a href="https://blogs.bing.com/webmaster/september-2023/Announcing-new-options-for-webmasters-to-control-usage-of-their-content-in-Bing-Chat">annonce Bing</a>).</li>
+</ul>
+<details>
+<summary>Exemple de robots.txt : rester visible, refuser l'entraînement</summary>
+<pre><code>User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://www.exemple.fr/sitemap.xml</code></pre>
+<p class="small">À adapter : refuser l'entraînement est un choix, pas une obligation. Ce bloc laisse passer
+<code>OAI-SearchBot</code>, <code>PerplexityBot</code>, <code>Claude-SearchBot</code>, <code>Googlebot</code> et
+<code>Bingbot</code>.</p>
+</details>
+
+<h2 id="contenu">3. Le contenu : répondre aux vraies questions</h2>
+<ul>
+<li><strong>Écrivez les questions de vos clients</strong> avec leurs mots (« combien coûte… », « délai pour… »,
+« différence entre… ») et répondez-y directement, en une ou deux phrases, puis en détail.</li>
+<li><strong>Donnez des faits précis et vérifiables</strong> : zones desservies, délais, garanties, certifications réelles,
+nombre d'années d'activité. Les assistants reprennent volontiers les formulations nettes.</li>
+<li><strong>Datez vos pages importantes</strong> et mettez à jour les informations qui changent (prix, horaires, offres).</li>
+<li><strong>Le texte doit être lisible sans JavaScript</strong> : un contenu chargé uniquement par script ou présent
+seulement dans une image ou un PDF est plus difficile à lire pour les robots.</li>
+<li><strong>Inutile de créer des fichiers spéciaux « pour l'IA »</strong> : Google précise qu'il n'est pas nécessaire de créer
+de fichiers lisibles par machine, de fichiers texte pour l'IA ou de balisage spécifique. Le fichier
+<code>llms.txt</code> est une <a href="https://llmstxt.org/">proposition</a>, pas un standard officiel.</li>
+</ul>
+
+<h2 id="donnees-structurees">4. Les données structurées : utiles, pas magiques</h2>
+<ul>
+<li><strong>Ajoutez un bloc <code>Organization</code></strong> (ou <code>LocalBusiness</code> si vous recevez des clients)
+sur la page d'accueil : nom, URL, logo, adresse, téléphone, liens vers vos profils officiels (<code>sameAs</code>). Voir les
+guides Google <a href="https://developers.google.com/search/docs/appearance/structured-data/organization">Organization</a> et
+<a href="https://developers.google.com/search/docs/appearance/structured-data/local-business">LocalBusiness</a>.</li>
+<li><strong>Le contenu balisé doit correspondre au texte visible</strong> de la page.</li>
+<li>Google indique qu'aucune donnée structurée particulière n'est requise pour ses fonctionnalités IA : ces balises aident
+surtout à rendre vos informations cohérentes et exploitables.</li>
+</ul>
+
+<h2 id="reputation">5. La réputation : des sources tierces sérieuses</h2>
+<ul>
+<li><strong>Soyez présent là où votre secteur est référencé</strong> : annuaires professionnels reconnus, fédérations,
+chambres consulaires, marketplaces sérieuses.</li>
+<li><strong>Encouragez de vrais avis</strong> de vrais clients et répondez-y, y compris aux critiques.</li>
+<li><strong>Obtenez des mentions éditoriales</strong> : presse locale, partenaires, événements. Ce sont souvent les sources
+que citent les assistants avec recherche web.</li>
+<li><strong>Vérifiez les fiches qui parlent de vous</strong> (annuaires, comparateurs) et corrigez les informations fausses.</li>
+</ul>
+
+<h2 id="mesure">6. La mesure : suivre sans se raconter d'histoires</h2>
+<ul>
+<li><strong>Google Search Console</strong> : le trafic issu des aperçus IA et du mode IA est compté dans le rapport
+« Performances », type de recherche « Web » (pas de rapport séparé).</li>
+<li><strong>Bing Webmaster Tools</strong> : vérifiez l'indexation de votre site par Bing.</li>
+<li><strong>Refaites le <a href="{{base}}kit-auto-test.html">test des 10 prompts</a></strong> tous les trimestres, avec la
+même méthode, et comparez les scores.</li>
+<li><strong>Demandez à vos nouveaux clients</strong> comment ils vous ont trouvé, en proposant « un assistant IA (ChatGPT,
+etc.) » parmi les réponses.</li>
+</ul>
+
+<h2 id="a-eviter">7. À éviter absolument</h2>
+<ul>
+<li><strong>Les faux avis</strong>, achetés ou rédigés par vous ou vos proches : c'est une pratique commerciale trompeuse
+« en toutes circonstances » (<a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044563107">article L121-4,
+27° et 28°, du Code de la consommation</a>), punie de peines pouvant aller, en ligne, jusqu'à cinq ans d'emprisonnement et
+750 000 € d'amende (<a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049532070">article L132-2</a>).
+Google interdit aussi les avis rémunérés ou en conflit d'intérêts
+(<a href="https://support.google.com/contributionpolicy/answer/7400114">règles Google</a>).</li>
+<li><strong>Le texte caché destiné aux IA</strong> (consignes invisibles, listes de mots-clés) : c'est de la manipulation,
+que les moteurs cherchent à détecter.</li>
+<li><strong>Les promesses de « classement garanti dans ChatGPT »</strong> : OpenAI indique lui-même que le placement
+n'est pas garanti.</li>
+<li><strong>Les pages générées en masse sans valeur</strong> pour chaque ville ou chaque mot-clé.</li>
+</ul>
+
+<h2 id="sources">Sources officielles</h2>
+<ul class="sources">
+<li>Google Search Central, <a href="https://developers.google.com/search/docs/appearance/ai-features">AI features and your website</a> (mis à jour le 10 décembre 2025)</li>
+<li>Google, <a href="https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers">robots d'exploration courants (Google-Extended)</a></li>
+<li>OpenAI, <a href="https://developers.openai.com/api/docs/bots">Overview of OpenAI crawlers</a> ; <a href="https://help.openai.com/en/articles/9237897-chatgpt-search">ChatGPT search</a></li>
+<li>Perplexity, <a href="https://docs.perplexity.ai/guides/bots">Perplexity crawlers</a></li>
+<li>Anthropic, <a href="https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler">Does Anthropic crawl data from the web?</a></li>
+<li>Microsoft Bing, <a href="https://blogs.bing.com/webmaster/september-2023/Announcing-new-options-for-webmasters-to-control-usage-of-their-content-in-Bing-Chat">contrôle de l'usage des contenus dans le chat Bing</a></li>
+<li>Google, <a href="https://support.google.com/business/answer/3038177">règles de représentation de votre établissement</a></li>
+<li>Légifrance, Code de la consommation, articles <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044563107">L121-4</a> et <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049532070">L132-2</a></li>
+<li><a href="https://llmstxt.org/">llmstxt.org</a> (proposition de Jeremy Howard, septembre 2024)</li>
+</ul>

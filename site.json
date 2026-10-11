@@ -1,0 +1,61 @@
+{
+  "repo": "VREAD-corp/visibilite-ia",
+  "brand": "Repère IA",
+  "logo_text": "Repère <span>IA</span>",
+  "lang": "fr",
+  "accent": "#0f766e",
+  "updated": "2026-10-11",
+  "nav": {
+    "fr": [
+      [
+        "Accueil",
+        "index.html"
+      ],
+      [
+        "Check-list GEO",
+        "checklist.html"
+      ],
+      [
+        "Kit 10 prompts",
+        "kit-auto-test.html"
+      ],
+      [
+        "Méthodologie",
+        "methodologie.html"
+      ],
+      [
+        "Rapport payant",
+        "version-payante.html"
+      ]
+    ]
+  },
+  "i18n": {
+    "fr": {
+      "locale": "fr_FR",
+      "skip": "Aller au contenu",
+      "home": "",
+      "nav_label": "Navigation principale",
+      "switch": "English",
+      "footer_product": "Un produit de READ FRANCE SAS · Contenus sous licence CC BY 4.0",
+      "footer_links": [
+        [
+          "Mentions légales",
+          "mentions-legales.html"
+        ],
+        [
+          "Confidentialité",
+          "confidentialite.html"
+        ],
+        [
+          "CGV (projet)",
+          "cgv.html"
+        ],
+        [
+          "Code source et contact",
+          "{{repo_url}}"
+        ]
+      ],
+      "footer_tracking": "Aucun cookie, aucun traceur, aucune donnée personnelle collectée."
+    }
+  }
+}
