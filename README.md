@@ -1,6 +1,6 @@
 # Repère IA — visibilité dans les assistants IA (GEO)
 
-Site : https://vread-corp.github.io/visibilite-ia/
+Site : https://outils.vread.fr/visibilite-ia/
 
 Check-list GEO et kit d'auto-test gratuits (10 prompts) pour que les PME vérifient comment ChatGPT, Perplexity,
 Gemini, Claude ou Copilot décrivent leur entreprise. Un produit de READ FRANCE SAS. Non affilié aux éditeurs cités.

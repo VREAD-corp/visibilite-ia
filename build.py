@@ -20,7 +20,7 @@ OUT = ROOT / "_site"
 def load_site():
     site = json.loads((ROOT / "site.json").read_text(encoding="utf-8"))
     site.setdefault("base", "/" + site["repo"].split("/")[1] + "/")
-    site["origin"] = site.get("origin", "https://vread-corp.github.io")
+    site["origin"] = site.get("origin", "https://outils.vread.fr")
     site["repo_url"] = "https://github.com/" + site["repo"]
     site["release"] = site["repo_url"] + "/releases/latest/download/"
     site["issues"] = site["repo_url"] + "/issues"

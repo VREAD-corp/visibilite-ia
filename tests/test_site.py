@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "_site"
 SITE = json.loads((ROOT / "site.json").read_text(encoding="utf-8"))
 BASE = SITE.get("base", "/" + SITE["repo"].split("/")[1] + "/")
-ORIGIN = "https://vread-corp.github.io"
+ORIGIN = "https://outils.vread.fr"
 
 
 class Page(HTMLParser):

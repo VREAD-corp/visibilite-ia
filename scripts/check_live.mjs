@@ -1,6 +1,6 @@
 // Live check: visits every URL of the live sitemap at 390px width,
 // records console errors, horizontal overflow and the HTTP status of every link.
-// Usage: node scripts/check_live.mjs https://vread-corp.github.io/<repo>/
+// Usage: node scripts/check_live.mjs https://outils.vread.fr/<repo>/
 import { chromium } from "playwright";
 
 const base = process.argv[2];
