@@ -27,6 +27,45 @@ def load_site():
     return site
 
 
+ORG_REF = {"@type": "Organization", "@id": "https://outils.vread.fr/#org", "name": "READ FRANCE SAS"}
+
+# « Autres outils READ FRANCE »: the same footer block on every outils.vread.fr site
+# (hub + the 4 paid offers). Absolute URLs: these pages live outside this site's base.
+NETWORK = {
+    "fr": ("Autres outils READ FRANCE", [
+        ("Tous les outils", "https://outils.vread.fr/", ""),
+        ("Kit Qualiopi V10", "https://outils.vread.fr/kit-qualiopi-v10/", ""),
+        ("Pack documentation GPSR", "https://outils.vread.fr/kit-gpsr-vendeurs/pack.html", ""),
+        ("Alertes appels d’offres formation", "https://outils.vread.fr/veille-ao-formation/alertes/", ""),
+        ("Audit d’accessibilité", "https://outils.vread.fr/declaration-accessibilite/audit/", ""),
+    ]),
+    "en": ("Other READ FRANCE tools", [
+        ("All tools", "https://outils.vread.fr/", ""),
+        ("Qualiopi V10 kit (in French)", "https://outils.vread.fr/kit-qualiopi-v10/", "fr"),
+        ("GPSR documentation pack", "https://outils.vread.fr/kit-gpsr-vendeurs/en/pack.html", ""),
+        ("Public training tender alerts (in French)", "https://outils.vread.fr/veille-ao-formation/alertes/", "fr"),
+        ("Accessibility audit", "https://outils.vread.fr/declaration-accessibilite/en/audit/", ""),
+    ]),
+}
+
+
+def network_html(lang):
+    title, links = NETWORK.get(lang, NETWORK["fr"])
+    items = "\n".join(
+        '<li><a href="%s"%s>%s</a></li>' % (href, ' hreflang="%s"' % hl if hl else "", label)
+        for label, href, hl in links)
+    return (f'<nav class="rf-network" aria-label="{title}">\n'
+            f'<p class="rf-network-title">{title}</p>\n<ul>\n{items}\n</ul>\n</nav>')
+
+
+# Internal links point at directory URLs, never at their index.html twin.
+INDEX_RE = re.compile(r'href="(/[^"#]*/)index\.html(#[^"]*)?"')
+
+
+def dir_url(path):
+    return path[:-10] if path.endswith("index.html") else path
+
+
 FM_RE = re.compile(r"\A\s*<!--(.*?)-->\s*", re.S)
 
 
@@ -71,9 +110,11 @@ def layout(site, meta, body, rel):
     alt = ""
     if meta.get("alternate"):
         alt_lang, alt_path = meta["alternate"].split(" ", 1)
-        alt_url = site["origin"] + site["base"] + alt_path
+        alt_url = site["origin"] + site["base"] + dir_url(alt_path)
+        default_url = page_url if lang == site["lang"] else alt_url
         alt = (f'<link rel="alternate" hreflang="{lang}" href="{page_url}">\n'
-               f'<link rel="alternate" hreflang="{alt_lang}" href="{alt_url}">')
+               f'<link rel="alternate" hreflang="{alt_lang}" href="{alt_url}">\n'
+               f'<link rel="alternate" hreflang="x-default" href="{default_url}">')
     jsonld = {
         "@context": "https://schema.org",
         "@type": meta.get("type", "WebPage"),
@@ -83,8 +124,7 @@ def layout(site, meta, body, rel):
         "url": page_url,
         "inLanguage": lang,
         "isAccessibleForFree": True,
-        "publisher": {"@type": "Organization", "name": "READ FRANCE SAS",
-                      "url": site["repo_url"]},
+        "publisher": ORG_REF,
     }
     if meta.get("updated"):
         jsonld["dateModified"] = meta["updated"]
@@ -139,6 +179,7 @@ def layout(site, meta, body, rel):
 </main>
 <footer class="site-footer">
 <div class="wrap">
+{network_html(lang)}
 <p>{t['footer_product']}</p>
 <p>{footer_links}</p>
 <p>{t['footer_tracking']}</p>
@@ -162,7 +203,7 @@ def main():
         page = layout(site, meta, fill(body, site), rel)
         dest = OUT / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(fill(page, site), encoding="utf-8")
+        dest.write_text(INDEX_RE.sub(r'href="\1\2"', fill(page, site)), encoding="utf-8")
         if meta.get("noindex") != "yes":
             loc = site["origin"] + site["base"] + (rel[:-10] if rel.endswith("index.html") else rel)
             pages.append((loc, meta.get("updated", site["updated"])))

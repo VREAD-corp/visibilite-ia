@@ -102,3 +102,10 @@ details[open] summary { margin-bottom: .5rem; }
 /* brand */
 :root { --accent: #0f766e; --link: #0d6b63; }
 @media (prefers-color-scheme: dark) { :root { --accent: #0f766e; --link: #6ee0d2; } }
+
+/* Cross-site block « Autres outils READ FRANCE » (same markup on every outils.vread.fr site) */
+.rf-network { margin: .3rem 0 .9rem; }
+.rf-network-title { margin: 0 0 .3rem; font-weight: 600; color: var(--text, inherit); }
+.rf-network ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .3rem 1.1rem; }
+.rf-network li { margin: 0; }
+.rf-network a { display: inline-block; padding: .2rem 0; }
