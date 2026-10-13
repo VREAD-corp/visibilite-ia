@@ -5,6 +5,7 @@
 - titles and descriptions unique across indexable pages
 - every internal link / asset resolves to a built file (and #anchors exist)
 - images have alt text; no third-party scripts, iframes or http:// links
+- every page loads mesure.js then cro.js (site = repo name, France backend), vendored byte-identical
 - sitemap.xml lists every indexable page; robots.txt points to it
 """
 import json
@@ -18,6 +19,8 @@ OUT = ROOT / "_site"
 SITE = json.loads((ROOT / "site.json").read_text(encoding="utf-8"))
 BASE = SITE.get("base", "/" + SITE["repo"].split("/")[1] + "/")
 ORIGIN = "https://outils.vread.fr"
+SLUG = SITE["repo"].split("/")[1]
+TRACK_API = "https://script.google.com/macros/s/AKfycbzD1IRL8QALluKGZxgGiORFP6-DkC_qFJYR9aOxZiimxa06nbCqpzUI-9iLblp6V2VY/exec"
 
 
 class Page(HTMLParser):
@@ -32,6 +35,7 @@ class Page(HTMLParser):
         self.ids = set()
         self.imgs_no_alt = 0
         self.ext_scripts = []
+        self.scripts = []
         self.iframes = 0
         self.noindex = False
         self._in_title = False
@@ -56,7 +60,9 @@ class Page(HTMLParser):
         elif tag == "img" and not a.get("alt") and a.get("alt") != "":
             self.imgs_no_alt += 1
         elif tag == "script" and a.get("src"):
-            self.ext_scripts.append(a["src"])
+            self.scripts.append(a)
+            if urlparse(a["src"]).netloc:
+                self.ext_scripts.append(a["src"])
         elif tag == "iframe":
             self.iframes += 1
         if tag == "a" and a.get("href"):
@@ -128,6 +134,15 @@ def main():
             errors.append(f"{where}: iframe found")
         for s in p.ext_scripts:
             errors.append(f"{where}: external script {s}")
+        srcs = [urlparse(s["src"]).path for s in p.scripts]
+        if srcs != [BASE + "assets/mesure.js", BASE + "assets/cro.js"]:
+            errors.append(f"{where}: want mesure.js then cro.js, got {srcs}")
+        else:
+            cro = p.scripts[1]
+            if (cro.get("data-site"), cro.get("data-api"), cro.get("data-hosts")) != (SLUG, TRACK_API, "outils.vread.fr"):
+                errors.append(f"{where}: cro.js data-site/data-api/data-hosts")
+            if not all("defer" in s for s in p.scripts) or any(s.get("type") == "module" for s in p.scripts):
+                errors.append(f"{where}: snippets must be classic deferred scripts")
         if not p.noindex:
             titles.setdefault(p.titles[0] if p.titles else "", []).append(rel)
             descs.setdefault(p.desc, []).append(rel)
@@ -164,6 +179,10 @@ def main():
             errors.append(f"sitemap missing {loc}")
     if "Sitemap: " + ORIGIN + BASE + "sitemap.xml" not in (OUT / "robots.txt").read_text():
         errors.append("robots.txt has no sitemap line")
+    for name in ("mesure.js", "cro.js"):
+        js = (ROOT / "assets" / name).read_text(encoding="utf-8")
+        if name == "mesure.js" and (TRACK_API not in js or "octave_notrack" not in js or "v:2" not in js):
+            errors.append("assets/mesure.js is not the octave-checkout snippet (v:2, octave_notrack)")
     for e in errors:
         print("FAIL", e)
     print(f"{len(pages)} pages checked, {len(errors)} errors")

@@ -21,6 +21,7 @@ jobs:
           python-version: "3.12"
       - run: python build.py
       - run: python tests/test_site.py
+      - run: node tests/cro.check.mjs assets/cro.js
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'
         with:

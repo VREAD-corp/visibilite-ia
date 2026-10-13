@@ -6,6 +6,7 @@ HTML comment), wraps them in one layout and writes _site/ with sitemap.xml,
 robots.txt and 404.html. Placeholders usable in fragments: {{base}}, {{asset}},
 {{release}} (latest-release download base URL), {{issues}}, {{repo_url}}.
 """
+import hashlib
 import html
 import json
 import re
@@ -25,6 +26,38 @@ def load_site():
     site["release"] = site["repo_url"] + "/releases/latest/download/"
     site["issues"] = site["repo_url"] + "/issues"
     return site
+
+
+# Anonymous audience counter (mesure.js) and aggregate behaviour counters (cro.js): both vendored byte-identical from
+# VREAD-corp/octave-checkout gas/web/ (never edit the copies), sent to the France backend octave-pay-gas (`track`
+# action, `site` = repo name, whitelisted there). The ?v= content hash makes crawlers' renderers drop an old copy.
+TRACK_API = "https://script.google.com/macros/s/AKfycbzD1IRL8QALluKGZxgGiORFP6-DkC_qFJYR9aOxZiimxa06nbCqpzUI-9iLblp6V2VY/exec"
+MESURE_V = hashlib.sha256((ROOT / "assets" / "mesure.js").read_bytes()).hexdigest()[:8]
+CRO_V = hashlib.sha256((ROOT / "assets" / "cro.js").read_bytes()).hexdigest()[:8]
+# Links whose clicks mesure.js counts (data-mesure): free PDFs (GitHub Releases) and the paid-version page.
+A_RE = re.compile(r'<a\b([^>]*)>')
+
+
+def tag_links(page):
+    def one(m):
+        attrs = m.group(1)
+        if "data-mesure" in attrs or 'aria-current="page"' in attrs:
+            return m.group(0)
+        href = re.search(r'href="([^"]*)"', attrs)
+        href = href.group(1) if href else ""
+        if "/releases/latest/download/" in href or "/releases/download/" in href:
+            return f'<a{attrs} data-mesure="free_download">'
+        if re.search(r"version-payante\.html(#|$)", href):
+            return f'<a{attrs} data-mesure="cta_click">'
+        return m.group(0)
+    return A_RE.sub(one, page)
+
+
+def tracking_tags(site):
+    slug = site["repo"].split("/")[1]
+    return (f'<script src="{site["base"]}assets/mesure.js?v={MESURE_V}" defer></script>\n'
+            f'<script src="{site["base"]}assets/cro.js?v={CRO_V}" data-site="{slug}" data-api="{TRACK_API}" '
+            f'data-hosts="outils.vread.fr" data-cta="[data-mesure]" defer></script>')
 
 
 ORG_REF = {"@type": "Organization", "@id": "https://outils.vread.fr/#org", "name": "READ FRANCE SAS"}
@@ -185,6 +218,7 @@ def layout(site, meta, body, rel):
 <p>{t['footer_tracking']}</p>
 </div>
 </footer>
+{tracking_tags(site)}
 </body>
 </html>
 """
@@ -203,7 +237,7 @@ def main():
         page = layout(site, meta, fill(body, site), rel)
         dest = OUT / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(INDEX_RE.sub(r'href="\1\2"', fill(page, site)), encoding="utf-8")
+        dest.write_text(tag_links(INDEX_RE.sub(r'href="\1\2"', fill(page, site))), encoding="utf-8")
         if meta.get("noindex") != "yes":
             loc = site["origin"] + site["base"] + (rel[:-10] if rel.endswith("index.html") else rel)
             pages.append((loc, meta.get("updated", site["updated"])))
