@@ -1,5 +1,7 @@
 {
   "repo": "VREAD-corp/visibilite-ia",
+  "origin": "https://visibilite-ia.jalonel.com",
+  "base": "/",
   "brand": "Repère IA",
   "logo_text": "Repère <span>IA</span>",
   "lang": "fr",
@@ -36,7 +38,7 @@
       "home": "",
       "nav_label": "Navigation principale",
       "switch": "English",
-      "footer_product": "Un produit de READ FRANCE SAS · Contenus sous licence CC BY 4.0",
+      "footer_product": "<a href=\"https://jalonel.com/\">Une marque Jalonel</a> · Contenus sous licence CC BY 4.0",
       "footer_links": [
         [
           "Mentions légales",

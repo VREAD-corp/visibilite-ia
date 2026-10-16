@@ -17,8 +17,10 @@ from urllib.parse import urlparse, unquote
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "_site"
 SITE = json.loads((ROOT / "site.json").read_text(encoding="utf-8"))
-BASE = SITE.get("base", "/" + SITE["repo"].split("/")[1] + "/")
-ORIGIN = "https://outils.vread.fr"
+BASE = SITE.get("base", "/")
+ORIGIN = SITE.get("origin", "https://visibilite-ia.jalonel.com")
+HOST = ORIGIN.split("//")[1]
+INDEXNOW_KEY = "5be19f56d46ca3d2553bee28ebfa8edd"
 SLUG = SITE["repo"].split("/")[1]
 TRACK_API = "https://script.google.com/macros/s/AKfycbzD1IRL8QALluKGZxgGiORFP6-DkC_qFJYR9aOxZiimxa06nbCqpzUI-9iLblp6V2VY/exec"
 
@@ -139,7 +141,7 @@ def main():
             errors.append(f"{where}: want mesure.js then cro.js, got {srcs}")
         else:
             cro = p.scripts[1]
-            if (cro.get("data-site"), cro.get("data-api"), cro.get("data-hosts")) != (SLUG, TRACK_API, "outils.vread.fr"):
+            if (cro.get("data-site"), cro.get("data-api"), cro.get("data-hosts")) != (SLUG, TRACK_API, HOST + " outils.vread.fr"):
                 errors.append(f"{where}: cro.js data-site/data-api/data-hosts")
             if not all("defer" in s for s in p.scripts) or any(s.get("type") == "module" for s in p.scripts):
                 errors.append(f"{where}: snippets must be classic deferred scripts")
@@ -179,6 +181,13 @@ def main():
             errors.append(f"sitemap missing {loc}")
     if "Sitemap: " + ORIGIN + BASE + "sitemap.xml" not in (OUT / "robots.txt").read_text():
         errors.append("robots.txt has no sitemap line")
+    if (OUT / "CNAME").read_text().strip() != HOST:
+        errors.append("CNAME does not hold " + HOST)
+    if (OUT / (INDEXNOW_KEY + ".txt")).read_text() != INDEXNOW_KEY:
+        errors.append("IndexNow key file missing at the site root")
+    for rel, p in pages.items():
+        if "outils.vread.fr/visibilite-ia" in (OUT / rel).read_text(encoding="utf-8"):
+            errors.append(f"{rel}: old outils.vread.fr URL")
     for name in ("mesure.js", "cro.js"):
         js = (ROOT / "assets" / name).read_text(encoding="utf-8")
         if name == "mesure.js" and (TRACK_API not in js or "octave_notrack" not in js or "v:2" not in js):

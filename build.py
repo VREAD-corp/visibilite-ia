@@ -3,7 +3,7 @@
 
 Reads site.json + content/**/*.html fragments (front matter in a leading
 HTML comment), wraps them in one layout and writes _site/ with sitemap.xml,
-robots.txt and 404.html. Placeholders usable in fragments: {{base}}, {{asset}},
+robots.txt, CNAME, the IndexNow key file and 404.html. Placeholders usable in fragments: {{base}}, {{asset}},
 {{release}} (latest-release download base URL), {{issues}}, {{repo_url}}.
 """
 import hashlib
@@ -20,8 +20,9 @@ OUT = ROOT / "_site"
 
 def load_site():
     site = json.loads((ROOT / "site.json").read_text(encoding="utf-8"))
-    site.setdefault("base", "/" + site["repo"].split("/")[1] + "/")
-    site["origin"] = site.get("origin", "https://outils.vread.fr")
+    # Served at the root of its own Jalonel subdomain since 2026-10-16 (was outils.vread.fr/visibilite-ia/).
+    site.setdefault("base", "/")
+    site["origin"] = site.get("origin", "https://visibilite-ia.jalonel.com")
     site["repo_url"] = "https://github.com/" + site["repo"]
     site["release"] = site["repo_url"] + "/releases/latest/download/"
     site["issues"] = site["repo_url"] + "/issues"
@@ -30,7 +31,7 @@ def load_site():
 
 # Anonymous audience counter (mesure.js) and aggregate behaviour counters (cro.js): both vendored byte-identical from
 # VREAD-corp/octave-checkout gas/web/ (never edit the copies), sent to the France backend octave-pay-gas (`track`
-# action, `site` = repo name, whitelisted there). The ?v= content hash makes crawlers' renderers drop an old copy.
+# action, `site` = repo name, whitelisted there; mesure.js maps the visibilite-ia.jalonel.com host to that site id). The ?v= content hash makes crawlers' renderers drop an old copy.
 TRACK_API = "https://script.google.com/macros/s/AKfycbzD1IRL8QALluKGZxgGiORFP6-DkC_qFJYR9aOxZiimxa06nbCqpzUI-9iLblp6V2VY/exec"
 MESURE_V = hashlib.sha256((ROOT / "assets" / "mesure.js").read_bytes()).hexdigest()[:8]
 CRO_V = hashlib.sha256((ROOT / "assets" / "cro.js").read_bytes()).hexdigest()[:8]
@@ -57,27 +58,32 @@ def tracking_tags(site):
     slug = site["repo"].split("/")[1]
     return (f'<script src="{site["base"]}assets/mesure.js?v={MESURE_V}" defer></script>\n'
             f'<script src="{site["base"]}assets/cro.js?v={CRO_V}" data-site="{slug}" data-api="{TRACK_API}" '
-            f'data-hosts="outils.vread.fr" data-cta="[data-mesure]" defer></script>')
+            f'data-hosts="{site["origin"].split("//")[1]} outils.vread.fr" data-cta="[data-mesure]" defer></script>')
 
 
-ORG_REF = {"@type": "Organization", "@id": "https://outils.vread.fr/#org", "name": "READ FRANCE SAS"}
+# Publisher: the Jalonel brand (hub https://jalonel.com/), operated by READ FRANCE SAS.
+ORG_REF = {"@type": "Organization", "@id": "https://jalonel.com/#org", "name": "Jalonel", "url": "https://jalonel.com/",
+           "parentOrganization": {"@type": "Organization", "name": "READ FRANCE SAS", "identifier": "SIREN 988741773"}}
 
-# « Autres outils READ FRANCE »: the same footer block on every outils.vread.fr site
-# (hub + the 4 paid offers). Absolute URLs: these pages live outside this site's base.
+# IndexNow key, served at the site root (https://visibilite-ia.jalonel.com/<key>.txt).
+INDEXNOW_KEY = "5be19f56d46ca3d2553bee28ebfa8edd"
+
+# « Autres outils Jalonel »: the same footer block on every Jalonel site (hub + the paid offers).
+# Absolute URLs: these pages live on other subdomains.
 NETWORK = {
-    "fr": ("Autres outils READ FRANCE", [
-        ("Tous les outils", "https://outils.vread.fr/", ""),
-        ("Kit Qualiopi V10", "https://outils.vread.fr/kit-qualiopi-v10/", ""),
-        ("Pack documentation GPSR", "https://outils.vread.fr/kit-gpsr-vendeurs/pack.html", ""),
-        ("Alertes appels d’offres formation", "https://outils.vread.fr/veille-ao-formation/alertes/", ""),
-        ("Audit d’accessibilité", "https://outils.vread.fr/declaration-accessibilite/audit/", ""),
+    "fr": ("Autres outils Jalonel", [
+        ("Tous les outils", "https://jalonel.com/", ""),
+        ("Kit Qualiopi V10", "https://qualiopi.jalonel.com/", ""),
+        ("Pack documentation GPSR", "https://gpsr.jalonel.com/pack.html", ""),
+        ("Alertes appels d’offres formation", "https://ao-formation.jalonel.com/alertes/", ""),
+        ("Audit d’accessibilité", "https://accessibilite.jalonel.com/audit/", ""),
     ]),
-    "en": ("Other READ FRANCE tools", [
-        ("All tools", "https://outils.vread.fr/", ""),
-        ("Qualiopi V10 kit (in French)", "https://outils.vread.fr/kit-qualiopi-v10/", "fr"),
-        ("GPSR documentation pack", "https://outils.vread.fr/kit-gpsr-vendeurs/en/pack.html", ""),
-        ("Public training tender alerts (in French)", "https://outils.vread.fr/veille-ao-formation/alertes/", "fr"),
-        ("Accessibility audit", "https://outils.vread.fr/declaration-accessibilite/en/audit/", ""),
+    "en": ("Other Jalonel tools", [
+        ("All tools", "https://jalonel.com/en/", ""),
+        ("Qualiopi V10 kit (in French)", "https://qualiopi.jalonel.com/", "fr"),
+        ("GPSR documentation pack", "https://gpsr.jalonel.com/en/pack.html", ""),
+        ("Public training tender alerts (in French)", "https://ao-formation.jalonel.com/alertes/", "fr"),
+        ("Accessibility audit", "https://accessibilite.jalonel.com/en/audit/", ""),
     ]),
 }
 
@@ -92,7 +98,7 @@ def network_html(lang):
 
 
 # Internal links point at directory URLs, never at their index.html twin.
-INDEX_RE = re.compile(r'href="(/[^"#]*/)index\.html(#[^"]*)?"')
+INDEX_RE = re.compile(r'href="(/(?:[^"#]*/)?)index\.html(#[^"]*)?"')
 
 
 def dir_url(path):
@@ -251,6 +257,8 @@ def main():
         f"User-agent: *\nAllow: /\n\nSitemap: {site['origin']}{site['base']}sitemap.xml\n",
         encoding="utf-8")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
+    (OUT / "CNAME").write_text(site["origin"].split("//")[1] + "\n", encoding="utf-8")
+    (OUT / f"{INDEXNOW_KEY}.txt").write_text(INDEXNOW_KEY, encoding="utf-8")
     print(f"built {len(pages)} pages into {OUT}")
 
 
