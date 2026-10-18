@@ -18,10 +18,10 @@ Version payante (rapport à 149 € HT) : **pas encore en vente**, aucune comman
 
 `assets/mesure.js` (compteur d'audience anonyme, `v:2`, robots / navigateurs automatisés / `octave_notrack=1` comptés à
 part) et `assets/cro.js` (compteurs agrégés de comportement) sont copiés **à l'identique** depuis
-`VREAD-corp/octave-checkout` (`gas/web/`, ne jamais modifier les copies). Chargés sur chaque page par `build.py`
+`VREAD-corp/octave-checkout` (`gas/web/jalonel/`, ne jamais modifier les copies). Chargés sur chaque page par `build.py`
 (`data-site="visibilite-ia"`, avec empreinte `?v=`), ils envoient l'action `track` au backend France `octave-pay-gas`, qui
 accepte ce site (`mesure.js` déduit l'identifiant `visibilite-ia` de l'hôte `visibilite-ia.jalonel.com` ; `cro.js` :
-`data-hosts="visibilite-ia.jalonel.com outils.vread.fr"`). Clics comptés : PDF gratuits (`free_download`) et page « version payante » (`cta_click`). Aucun cookie,
+`data-hosts="visibilite-ia.jalonel.com"`). Clics comptés : PDF gratuits (`free_download`) et page « version payante » (`cta_click`). Aucun cookie,
 aucun identifiant, rien sous Do Not Track / GPC ; nos tests ajoutent `?octave_notrack=1`. Détails :
 `content/confidentialite.html`. Après une mise à jour du snippet maître : recopier les deux fichiers puis
 `node tests/cro.check.mjs assets/cro.js`.

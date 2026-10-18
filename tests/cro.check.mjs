@@ -1,5 +1,5 @@
 // Behaviour of cro.js (Octave aggregate behaviour counters + A/B variants) in a fake browser.
-// Portable, no dependency: node cro.check.mjs [path/to/cro.js]   (exit code 0 = ok). Vendored byte-identical.
+// Portable, no dependency: node cro.check.mjs [path/to/cro.js]   (exit code 0 = ok). Vendored from octave-checkout gas/web/cro.check.mjs, run on the Jalonel host (visibilite-ia.jalonel.com).
 import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
@@ -23,14 +23,14 @@ class El {
   setAttribute(k, v) { this.attrs[k] = String(v); }
 }
 
-function browser({ ua = CHROME, webdriver = false, search = '', local = {}, session = {}, dnt = '', gpc = false, host = 'outils.vread.fr',
+function browser({ ua = CHROME, webdriver = false, search = '', local = {}, session = {}, dnt = '', gpc = false, host = 'visibilite-ia.jalonel.com',
   path = '/candadopyme/', xp, prerendering = false, visibility = 'visible', now = Date.UTC(2026, 9, 13, 15), scrollHeight = 800, attrs = {} } = {}) {
   const sent = [], winL = {}, docL = {}, els = [], observed = [];
   const store = (o) => ({ getItem: (k) => (k in o ? o[k] : null), setItem: (k, v) => { o[k] = String(v); }, removeItem: (k) => { delete o[k]; } });
   const html = new El('html');
   const doc = {
     readyState: 'complete', prerendering, visibilityState: visibility, referrer: 'https://www.google.com/', forms: [], documentElement: Object.assign(html, { scrollHeight }),
-    currentScript: { dataset: { site: 'candadopyme', api: API, ...attrs } },
+    currentScript: { dataset: { site: 'candadopyme', api: API, hosts: 'visibilite-ia.jalonel.com', ...attrs } },
     addEventListener: (k, f) => { (docL[k] ||= []).push(f); }, removeEventListener: (k, f) => { docL[k] = (docL[k] || []).filter((g) => g !== f); },
     querySelectorAll: (sel) => els.filter((e) => e.matches(sel)),
   };
@@ -115,7 +115,7 @@ assert.ok(has(ev, 'form', 'preventa', 'submit') && !has(ev, 'abandon'), 'submitt
 
 // 4. CTA timing, outbound domain, rage clicks, FAQ items, JS errors (hash only, capped).
 b = browser();
-const cta = b.el('a', { dataset: { cta: '' }, sels: ['a[href]'], hostname: 'outils.vread.fr' });
+const cta = b.el('a', { dataset: { cta: '' }, sels: ['a[href]'], hostname: 'visibilite-ia.jalonel.com' });
 const out = b.el('a', { sels: ['a[href]'], hostname: 'www.sii.cl' });
 const btn = b.el('button', { id: 'calc', cls: ['big'] });
 b.run();

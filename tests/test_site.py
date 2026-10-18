@@ -141,7 +141,7 @@ def main():
             errors.append(f"{where}: want mesure.js then cro.js, got {srcs}")
         else:
             cro = p.scripts[1]
-            if (cro.get("data-site"), cro.get("data-api"), cro.get("data-hosts")) != (SLUG, TRACK_API, HOST + " outils.vread.fr"):
+            if (cro.get("data-site"), cro.get("data-api"), cro.get("data-hosts")) != (SLUG, TRACK_API, HOST):
                 errors.append(f"{where}: cro.js data-site/data-api/data-hosts")
             if not all("defer" in s for s in p.scripts) or any(s.get("type") == "module" for s in p.scripts):
                 errors.append(f"{where}: snippets must be classic deferred scripts")
@@ -185,9 +185,13 @@ def main():
         errors.append("CNAME does not hold " + HOST)
     if (OUT / (INDEXNOW_KEY + ".txt")).read_text() != INDEXNOW_KEY:
         errors.append("IndexNow key file missing at the site root")
-    for rel, p in pages.items():
-        if "outils.vread.fr/visibilite-ia" in (OUT / rel).read_text(encoding="utf-8"):
-            errors.append(f"{rel}: old outils.vread.fr URL")
+    # Jalonel brand only: no Vread / outils.vread.fr mention or address in anything served.
+    for f in sorted(OUT.rglob("*")):
+        if f.is_file() and f.suffix in (".html", ".js", ".css", ".json", ".xml", ".txt", ".svg"):
+            text = f.read_text(encoding="utf-8").lower()
+            for bad in ("vread.fr", "vread ", "octave@"):
+                if bad in text:
+                    errors.append(f"{f.relative_to(OUT)}: mentions {bad}")
     for name in ("mesure.js", "cro.js"):
         js = (ROOT / "assets" / name).read_text(encoding="utf-8")
         if name == "mesure.js" and (TRACK_API not in js or "octave_notrack" not in js or "v:2" not in js):
