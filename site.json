@@ -1,5 +1,6 @@
 {
   "repo": "VREAD-corp/visibilite-ia",
+  "contact": "contact@jalonel.com",
   "origin": "https://visibilite-ia.jalonel.com",
   "base": "/",
   "brand": "Repère IA",
@@ -53,8 +54,8 @@
           "cgv.html"
         ],
         [
-          "Code source et contact",
-          "{{repo_url}}"
+          "Contact : contact@jalonel.com",
+          "mailto:{{contact}}"
         ]
       ],
       "footer_tracking": "Aucun cookie, aucune donnée personnelle collectée. Mesure d’audience anonyme et agrégée, sans identifiant."

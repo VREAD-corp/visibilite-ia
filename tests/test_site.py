@@ -185,13 +185,22 @@ def main():
         errors.append("CNAME does not hold " + HOST)
     if (OUT / (INDEXNOW_KEY + ".txt")).read_text() != INDEXNOW_KEY:
         errors.append("IndexNow key file missing at the site root")
-    # Jalonel brand only: no Vread / outils.vread.fr mention or address in anything served.
+    # Jalonel brand only: no Vread mention, GitHub repository / issues / releases link or « code source » in anything served.
     for f in sorted(OUT.rglob("*")):
         if f.is_file() and f.suffix in (".html", ".js", ".css", ".json", ".xml", ".txt", ".svg"):
             text = f.read_text(encoding="utf-8").lower()
-            for bad in ("vread.fr", "vread ", "octave@"):
+            for bad in ("vread", "octave@", "/issues", "code source", "/releases/"):
                 if bad in text:
                     errors.append(f"{f.relative_to(OUT)}: mentions {bad}")
+    # Free PDFs served by the site itself, linked with the free_download counter.
+    for name in ("checklist-geo-pme.pdf", "kit-auto-test-visibilite-ia.pdf"):
+        pdf = OUT / "telechargements" / name
+        if not pdf.exists() or not pdf.read_bytes().startswith(b"%PDF-"):
+            errors.append(f"telechargements/{name} missing or not a PDF")
+        if f'href="{BASE}telechargements/{name}" data-mesure="free_download"' not in (OUT / "index.html").read_text(encoding="utf-8"):
+            errors.append(f"index.html: no tracked link to telechargements/{name}")
+    if 'href="mailto:contact@jalonel.com"' not in (OUT / "index.html").read_text(encoding="utf-8"):
+        errors.append("index.html: footer has no mailto:contact@jalonel.com")
     for name in ("mesure.js", "cro.js"):
         js = (ROOT / "assets" / name).read_text(encoding="utf-8")
         if name == "mesure.js" and (TRACK_API not in js or "octave_notrack" not in js or "v:2" not in js):

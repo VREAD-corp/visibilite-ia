@@ -4,7 +4,7 @@
 Reads site.json + content/**/*.html fragments (front matter in a leading
 HTML comment), wraps them in one layout and writes _site/ with sitemap.xml,
 robots.txt, CNAME, the IndexNow key file and 404.html. Placeholders usable in fragments: {{base}}, {{asset}},
-{{release}} (latest-release download base URL), {{issues}}, {{repo_url}}.
+{{release}} (base URL of the free downloads, served from telechargements/), {{contact}} (public e-mail address).
 """
 import hashlib
 import html
@@ -23,9 +23,9 @@ def load_site():
     # Served at the root of its own Jalonel subdomain since 2026-10-16.
     site.setdefault("base", "/")
     site["origin"] = site.get("origin", "https://visibilite-ia.jalonel.com")
-    site["repo_url"] = "https://github.com/" + site["repo"]
-    site["release"] = site["repo_url"] + "/releases/latest/download/"
-    site["issues"] = site["repo_url"] + "/issues"
+    # Free PDFs: committed under telechargements/ and served by the site itself (no GitHub link on the site).
+    site["release"] = site["base"] + "telechargements/"
+    site.setdefault("contact", "contact@jalonel.com")
     return site
 
 
@@ -35,7 +35,7 @@ def load_site():
 TRACK_API = "https://script.google.com/macros/s/AKfycbzD1IRL8QALluKGZxgGiORFP6-DkC_qFJYR9aOxZiimxa06nbCqpzUI-9iLblp6V2VY/exec"
 MESURE_V = hashlib.sha256((ROOT / "assets" / "mesure.js").read_bytes()).hexdigest()[:8]
 CRO_V = hashlib.sha256((ROOT / "assets" / "cro.js").read_bytes()).hexdigest()[:8]
-# Links whose clicks mesure.js counts (data-mesure): free PDFs (GitHub Releases) and the paid-version page.
+# Links whose clicks mesure.js counts (data-mesure): free PDFs (telechargements/) and the paid-version page.
 A_RE = re.compile(r'<a\b([^>]*)>')
 
 
@@ -46,7 +46,7 @@ def tag_links(page):
             return m.group(0)
         href = re.search(r'href="([^"]*)"', attrs)
         href = href.group(1) if href else ""
-        if "/releases/latest/download/" in href or "/releases/download/" in href:
+        if href.startswith("/telechargements/") and href.endswith(".pdf"):
             return f'<a{attrs} data-mesure="free_download">'
         if re.search(r"version-payante\.html(#|$)", href):
             return f'<a{attrs} data-mesure="cta_click">'
@@ -96,7 +96,7 @@ def parse(path):
 
 
 def fill(text, site):
-    for key in ("base", "release", "issues", "repo_url"):
+    for key in ("base", "release", "contact"):
         text = text.replace("{{" + key + "}}", site[key])
     return text
 
@@ -145,7 +145,7 @@ def layout(site, meta, body, rel):
         lang_switch = (f'<a class="lang" href="{site["base"]}{alt_path}" hreflang="{alt_lang}" '
                        f'lang="{alt_lang}">{site["i18n"][alt_lang]["switch"]}</a>')
     footer_links = " · ".join(
-        f'<a href="{href if href.startswith(("http", "{{")) else site["base"] + href}">{html.escape(label)}</a>'
+        f'<a href="{href if href.startswith(("http", "mailto:", "{{")) else site["base"] + href}">{html.escape(label)}</a>'
         for label, href in t["footer_links"])
     banner = ""
     if site.get("banner", {}).get(lang):
@@ -206,6 +206,7 @@ def main():
         shutil.rmtree(OUT)
     OUT.mkdir()
     shutil.copytree(ROOT / "assets", OUT / "assets")
+    shutil.copytree(ROOT / "telechargements", OUT / "telechargements")
     pages = []
     for src in sorted((ROOT / "content").rglob("*.html")):
         rel = src.relative_to(ROOT / "content").as_posix()

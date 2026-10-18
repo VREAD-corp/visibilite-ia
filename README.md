@@ -8,7 +8,7 @@ https://outils.vread.fr/visibilite-ia/ : redirection 301 de GitHub Pages vers la
 Check-list GEO et kit d'auto-test gratuits (10 prompts) pour que les PME vérifient comment ChatGPT, Perplexity,
 Gemini, Claude ou Copilot décrivent leur entreprise. Une marque Jalonel (Jalonel est une marque de READ FRANCE SAS). Non affilié aux éditeurs cités.
 
-Téléchargements gratuits (GitHub Releases) :
+Téléchargements gratuits (servis par le site, `telechargements/` → https://visibilite-ia.jalonel.com/telechargements/) :
 - `checklist-geo-pme.pdf`
 - `kit-auto-test-visibilite-ia.pdf`
 
@@ -29,7 +29,7 @@ aucun identifiant, rien sous Do Not Track / GPC ; nos tests ajoutent `?octave_no
 ## Structure
 
 - `content/` — pages (fragments HTML avec en-tête de métadonnées)
-- `pdf/` — sources HTML des PDF publiés en Release
+- `pdf/` — sources HTML des PDF ; les PDF rendus (`node scripts/make_pdf.mjs` → `dist/`) sont copiés dans `telechargements/` (servis par le site)
 - `build.py` — générateur statique sans dépendance (`python3 build.py` → `_site/`)
 - `tests/test_site.py` — vérifications (titres, descriptions, liens internes, sitemap, pas de script tiers)
 - `scripts/make_pdf.mjs` — rendu des PDF et de l'image Open Graph (Playwright)
@@ -46,4 +46,4 @@ npm i && node scripts/make_pdf.mjs   # PDF dans dist/
 Le déploiement GitHub Pages se fait par `.github/workflows/pages.yml` (build + tests + déploiement).
 
 Contenus : CC BY 4.0. Code : MIT. Voir `LICENSE`.
-Signaler une erreur : onglet Issues (aucune donnée personnelle, les tickets sont publics).
+Contact et signalement d'erreur : contact@jalonel.com.
