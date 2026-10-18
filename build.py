@@ -68,35 +68,6 @@ ORG_REF = {"@type": "Organization", "@id": "https://jalonel.com/#org", "name": "
 # IndexNow key, served at the site root (https://visibilite-ia.jalonel.com/<key>.txt).
 INDEXNOW_KEY = "5be19f56d46ca3d2553bee28ebfa8edd"
 
-# « Autres outils Jalonel »: the same footer block on every Jalonel site (hub + the paid offers).
-# Absolute URLs: these pages live on other subdomains.
-NETWORK = {
-    "fr": ("Autres outils Jalonel", [
-        ("Tous les outils", "https://jalonel.com/", ""),
-        ("Kit Qualiopi V10", "https://qualiopi.jalonel.com/", ""),
-        ("Pack documentation GPSR", "https://gpsr.jalonel.com/pack.html", ""),
-        ("Alertes appels d’offres formation", "https://ao-formation.jalonel.com/alertes/", ""),
-        ("Audit d’accessibilité", "https://accessibilite.jalonel.com/audit/", ""),
-    ]),
-    "en": ("Other Jalonel tools", [
-        ("All tools", "https://jalonel.com/en/", ""),
-        ("Qualiopi V10 kit (in French)", "https://qualiopi.jalonel.com/", "fr"),
-        ("GPSR documentation pack", "https://gpsr.jalonel.com/en/pack.html", ""),
-        ("Public training tender alerts (in French)", "https://ao-formation.jalonel.com/alertes/", "fr"),
-        ("Accessibility audit", "https://accessibilite.jalonel.com/en/audit/", ""),
-    ]),
-}
-
-
-def network_html(lang):
-    title, links = NETWORK.get(lang, NETWORK["fr"])
-    items = "\n".join(
-        '<li><a href="%s"%s>%s</a></li>' % (href, ' hreflang="%s"' % hl if hl else "", label)
-        for label, href, hl in links)
-    return (f'<nav class="rf-network" aria-label="{title}">\n'
-            f'<p class="rf-network-title">{title}</p>\n<ul>\n{items}\n</ul>\n</nav>')
-
-
 # Internal links point at directory URLs, never at their index.html twin.
 INDEX_RE = re.compile(r'href="(/(?:[^"#]*/)?)index\.html(#[^"]*)?"')
 
@@ -167,7 +138,7 @@ def layout(site, meta, body, rel):
     }
     if meta.get("updated"):
         jsonld["dateModified"] = meta["updated"]
-    robots = '\n<meta name="robots" content="noindex">' if meta.get("noindex") == "yes" else ""
+    robots = '\n<meta name="robots" content="noindex, follow">' if meta.get("noindex") == "yes" else ""
     lang_switch = ""
     if meta.get("alternate"):
         alt_lang, alt_path = meta["alternate"].split(" ", 1)
@@ -218,7 +189,6 @@ def layout(site, meta, body, rel):
 </main>
 <footer class="site-footer">
 <div class="wrap">
-{network_html(lang)}
 <p>{t['footer_product']}</p>
 <p>{footer_links}</p>
 <p>{t['footer_tracking']}</p>
